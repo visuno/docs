@@ -1,6 +1,17 @@
 import { createGetUrl } from 'fumadocs-core/source';
 
 export const appName = 'Visuno';
+
+/**
+ * The single source of truth for the Visuno library version shown in these docs.
+ * The three framework packages (react, angular, flutter) and this docs site all
+ * move together on one unified version — bump this in lockstep with their
+ * package.json / pubspec.yaml when cutting a release, and add a matching
+ * `## v<version> — <date>` section to the changelog. Surfaced as the version
+ * badge in the nav (see lib/layout.shared.tsx) and links to the changelog.
+ */
+export const libVersion = '0.3.0';
+
 export const docsRoute = '/docs';
 export const docsImageRoute = '/og/docs';
 export const docsContentRoute = '/llms.mdx/docs';

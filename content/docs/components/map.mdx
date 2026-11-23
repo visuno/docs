@@ -1,0 +1,127 @@
+---
+title: Map
+description: One or more places on OpenStreetMap, with numbered pins, a side list and a popup of details.
+since: 0.3.0
+---
+
+import { Preview } from '@/components/preview';
+import { MapExample } from '@/components/examples/map';
+
+A map shows one or many places on OpenStreetMap: numbered pins on the map, a list of the places
+beside it, and a popup with the title, address, description and an optional link for the one that is
+picked. Clicking a pin or a list row picks it; the map flies to it. Leaflet and the OSM tiles are
+loaded on demand from a CDN rather than bundled, so you — not Visuno — decide to ship them; until
+they load (or if you turn them off), the map shows a static surface and the pins, list and popups
+still work.
+
+<Preview>
+  <MapExample />
+</Preview>
+
+## Usage
+
+<Tabs items={['React', 'Angular', 'Flutter']}>
+
+<Tab value="React">
+
+```tsx
+import { Map } from './map/Map';
+
+<Map
+  label="Map of our offices"
+  locations={[
+    {
+      id: 'berlin',
+      title: 'Visuno Berlin',
+      kind: 'HQ',
+      lat: 52.5096,
+      lng: 13.3765,
+      address: 'Potsdamer Platz 1, 10785 Berlin',
+      description: 'The design studio and the home of the library.',
+      href: 'https://maps.example.com/berlin',
+      linkLabel: 'Directions',
+    },
+    { id: 'lisbon', title: 'Visuno Lisbon', lat: 38.7223, lng: -9.1393, address: 'Praça do Comércio' },
+  ]}
+  onSelect={(id) => console.log(id)}
+/>
+```
+
+The `leaflet` prop controls the on-demand load: `true` (the default) fetches Leaflet 1.9.4 and the
+OSM tiles from a CDN, `false` keeps the static fallback, and `{ js, css }` points at your own copy.
+
+</Tab>
+
+<Tab value="Angular">
+
+```html
+<!-- imports: [MapComponent] -->
+<Map
+  label="Map of our offices"
+  [locations]="locations"
+  [selected]="selected"
+  (selectChange)="selected = $event"
+></Map>
+
+// locations: MapLocation[] = [
+//   { id: 'berlin', title: 'Visuno Berlin', kind: 'HQ', lat: 52.5096, lng: 13.3765,
+//     address: 'Potsdamer Platz 1, 10785 Berlin', href: 'https://maps.example.com/berlin' },
+//   { id: 'lisbon', title: 'Visuno Lisbon', lat: 38.7223, lng: -9.1393 },
+// ];
+```
+
+</Tab>
+
+<Tab value="Flutter">
+
+```dart
+import 'components/map.dart';
+
+VoMap(
+  label: 'Map of our offices',
+  locations: const [
+    MapLocation(
+      id: 'berlin',
+      title: 'Visuno Berlin',
+      kind: 'HQ',
+      lat: 52.5096,
+      lng: 13.3765,
+      address: 'Potsdamer Platz 1, 10785 Berlin',
+      href: 'https://maps.example.com/berlin',
+      linkLabel: 'Directions',
+    ),
+    MapLocation(id: 'lisbon', title: 'Visuno Lisbon', lat: 38.7223, lng: -9.1393),
+  ],
+  onSelect: (id) => debugPrint(id),
+)
+```
+
+The Flutter widget renders the same pins, list and popups over a static map surface. To draw live
+OSM tiles, add the `flutter_map` package in your app and pass a tile builder — the pin/list/popup
+chrome is Visuno's; the tiles are yours to ship.
+
+</Tab>
+
+</Tabs>
+
+## Properties
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `locations` | `MapLocation[]` | The places. Each has a `title`, `lat`, `lng`, and optional `id`, `address`, `description`, `href`, `linkLabel` and `kind`. |
+| `selected` | `string` | The picked location's id. Leave it out to let a pin or row pick it. |
+| `onSelect` / `selectChange` | `callback` | Fires with the id when the picked place changes. |
+| `list` | `side \| below \| none` | Where the list of places sits, or `none` for the map and popups alone. Defaults to `side`. |
+| `height` | `number \| string` | The map's height. A number is pixels. Defaults to 360. |
+| `zoom` | `number` | The starting zoom for a single location (1 world … 19 street). Defaults to 14. |
+| `leaflet` | `boolean \| { js, css }` | On-demand load of Leaflet + OSM tiles. `true` (default) uses a CDN, `false` keeps the static fallback, an object self-hosts. |
+| `attribution` | `string` | The attribution line under the map. The OSM default is required when you use OSM tiles. |
+| `label` | `string` | A short label read to assistive tech, like "Map of our offices". |
+
+## Theming
+
+Works in light and dark (`data-theme="dark"`) and in the Soft style (`data-style="soft"`). The map
+surface, the pins, the popup card and the list rows take every color, radius and shadow from the
+tokens; the picked pin and row use the accent. The static fallback draws a faint token grid so the
+layout reads before — or without — the live tiles. OpenStreetMap attribution is always shown, as its
+tile usage policy requires.

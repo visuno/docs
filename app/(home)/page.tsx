@@ -61,6 +61,7 @@ import { InlineTextDiffExample } from "@/components/examples/inline-text-diff";
 import { DesignReviewExample } from "@/components/examples/design-review";
 import { PlanReviewExample } from "@/components/examples/plan-review";
 import { ChangeReviewExample } from "@/components/examples/change-review";
+import { MapExample } from "@/components/examples/map";
 import { SourceStackExample } from "@/components/examples/source-stack";
 import { MetricInsightExample } from "@/components/examples/metric-insight";
 import { TaskTableExample } from "@/components/examples/task-table";
@@ -359,6 +360,7 @@ const CATEGORIES: Category[] = [
     blurb:
       "What the agent produced and where it came from — code, data, citations.",
     items: [
+      { title: "Map", slug: "map", demo: <MapExample /> },
       {
         title: "Source stack",
         slug: "source-stack",

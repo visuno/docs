@@ -3,12 +3,21 @@ import { llms, loader } from 'fumadocs-core/source';
 import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
 import { defineDocs } from 'fumadocs-mdx/macro';
 import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+import { z } from 'zod';
 import { VisunoIcon } from '@visuno/icon/VisunoIcon';
+
+// Component pages carry a `since` in their frontmatter: the unified library
+// version the component first shipped in (e.g. "0.3.0"). It renders as the
+// "Since v…" badge under the page title. Adding it is part of shipping a
+// component's docs — see the `component-docs` skill in the dev root repo.
+const componentPageSchema = pageSchema.extend({
+  since: z.string().optional(),
+});
 
 const docs = defineDocs({
   dir: 'content/docs',
   docs: {
-    schema: pageSchema,
+    schema: componentPageSchema,
     postprocess: {
       includeProcessedMarkdown: true,
     },

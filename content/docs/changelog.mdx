@@ -6,8 +6,14 @@ icon: history
 
 Notable changes to the Visuno component library and these docs, newest first.
 Component source lives in the [components repository](https://github.com/Visuno/components).
+The React, Angular and Flutter packages and this docs site share one unified version
+(shown as the badge in the nav); each release below is stamped with that version.
 
-## Unreleased
+## v0.3.0 — 2026-11-16
+
+- **Unified versioning** — the three framework packages (React, Angular, Flutter) and the docs now move together on one version number, shown as a badge in the nav that links here. Releases below are version-stamped; dated sections predate the scheme.
+
+- **Map** — a new component that shows one or more places on OpenStreetMap, with numbered pins, a list beside the map and a popup of details (title, address, description and an optional link) for the picked one. Clicking a pin or a list row selects it and flies the map there. Leaflet and the OSM tiles load on demand from a CDN rather than being bundled, so your app chooses to ship them; until then a static map surface shows and the pins, list and popups still work. Lands in React, Angular and Flutter with a live docs page.
 
 - **Live answer (Flutter)** — inline `[n]` citations are small chips in the flow of the sentence again, matching React. The Flutter port stretched each citation into a full-width bar on its own line; now the chip hugs its number (a 17px pill) and sits inline next to the word it cites.
 
