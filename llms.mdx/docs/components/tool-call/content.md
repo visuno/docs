@@ -106,6 +106,114 @@ ToolCall(
 | `call.duration` | `string` | How long it took, like `412 ms`. Shown once done. |
 | `call.input` | `Json` | What the agent sent, shown as highlighted JSON. |
 | `call.output` | `Json` | What came back, shown once done. |
+| `call.outputContent` | `ReactNode` / `TemplateRef` / `Widget` | Rich output rendered inside the expanded Output panel. |
+
+## Rich tool output and MCP Apps [#rich-tool-output-and-mcp-apps]
+
+Use `outputContent` when a tool returns something interactive or visual instead of plain JSON: an
+MCP App, HTML preview, chart, map, image, artifact, or native control. Visuno owns the disclosure,
+layout, clipping, and lazy lifecycle. Rich output is mounted only while its tool panel is open, so a
+canvas, iframe, or WebView measures a visible container.
+
+Visuno deliberately does **not** implement the MCP transport. The host application remains
+responsible for authentication, resource loading, sandbox/WebView policy, JSON-RPC messaging, tool
+calls, approvals, and persistence. An MCP adapter turns that protocol state into the platform's rich
+output type.
+
+<Tabs items={['React', 'Angular', 'Flutter']}>
+
+<Tab value="React">
+
+```tsx
+const call: ToolCallItem = {
+  key: 'map-1',
+  server: 'places',
+  name: 'show_map',
+  state: 'done',
+  input: { location: 'London' },
+  outputContent: (
+    <McpAppView
+      resourceUri="ui://maps/app.html"
+      toolInput={{ location: 'London' }}
+      toolResult={result}
+    />
+  ),
+};
+
+<ToolCall calls={[call]} defaultOpen={[call.key]} />
+```
+
+`McpAppView` is an application adapter, not part of `@visuno/react`. It may use a sandboxed iframe
+and handle the MCP Apps JSON-RPC protocol.
+
+</Tab>
+
+<Tab value="Angular">
+
+```html
+<ng-template #mapOutput let-call>
+  <app-mcp-view
+    resourceUri="ui://maps/app.html"
+    [toolInput]="call.input"
+    [toolResult]="result"
+  />
+</ng-template>
+
+<ToolCall
+  [calls]="[{
+    key: 'map-1', server: 'places', name: 'show_map', state: 'done',
+    input: { location: 'London' }, outputContent: mapOutput
+  }]"
+  [defaultOpen]="['map-1']"
+/>
+```
+
+The rich output is an Angular `TemplateRef`. The host component supplies the iframe or other native
+Angular renderer and owns the protocol bridge.
+
+</Tab>
+
+<Tab value="Flutter">
+
+```dart
+ToolCall(
+  calls: [
+    ToolCallItem(
+      key: 'map-1',
+      server: 'places',
+      name: 'show_map',
+      state: ToolCallState.done,
+      input: const {'location': 'London'},
+      hasInput: true,
+      outputContent: McpAppView(
+        resourceUri: 'ui://maps/app.html',
+        toolInput: const {'location': 'London'},
+        toolResult: result,
+      ),
+    ),
+  ],
+  defaultOpen: const ['map-1'],
+)
+```
+
+`McpAppView` can use a WebView or a fully native Flutter implementation. It belongs to the host or a
+separate MCP adapter package; Visuno itself does not require a WebView dependency.
+
+</Tab>
+
+</Tabs>
+
+### Adapter boundary [#adapter-boundary]
+
+Keep protocol-specific code outside the component library:
+
+| Visuno owns | The host or adapter owns |
+| --- | --- |
+| Expand/collapse behavior | MCP connection and authentication |
+| Lazy mounting and sizing | Reading `ui://` resources |
+| Output layout and clipping | `ui/initialize` and notifications |
+| Loading/error presentation supplied by the renderer | Tool and resource JSON-RPC calls |
+| Cross-platform visual parity | iframe/WebView permissions and navigation policy |
 
 ## Theming [#theming]
 
